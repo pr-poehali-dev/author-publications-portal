@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import Icon from '@/components/ui/icon';
 
@@ -91,6 +92,7 @@ const publications: Publication[] = [
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<PublicationType | 'Все'>('Все');
+  const [sortBy, setSortBy] = useState<'year-desc' | 'year-asc' | 'title'>('year-desc');
   const [activeSection, setActiveSection] = useState<'publications' | 'about'>('publications');
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -121,13 +123,23 @@ const Index = () => {
     'Интервью'
   ];
 
-  const filteredPublications = publications.filter(pub => {
-    const matchesSearch = 
-      pub.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      pub.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = selectedType === 'Все' || pub.type === selectedType;
-    return matchesSearch && matchesType;
-  });
+  const filteredPublications = publications
+    .filter(pub => {
+      const matchesSearch = 
+        pub.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        pub.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesType = selectedType === 'Все' || pub.type === selectedType;
+      return matchesSearch && matchesType;
+    })
+    .sort((a, b) => {
+      if (sortBy === 'year-desc') {
+        return b.year - a.year;
+      } else if (sortBy === 'year-asc') {
+        return a.year - b.year;
+      } else {
+        return a.title.localeCompare(b.title);
+      }
+    });
 
   return (
     <div className="min-h-screen bg-background">
@@ -323,20 +335,36 @@ const Index = () => {
             />
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            {types.map((type) => (
-              <button
-                key={type}
-                onClick={() => setSelectedType(type)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                  selectedType === type
-                    ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                }`}
-              >
-                {type}
-              </button>
-            ))}
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div className="flex flex-wrap gap-2">
+              {types.map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setSelectedType(type)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                    selectedType === type
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <Icon name="ArrowUpDown" size={18} className="text-muted-foreground" />
+              <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+                <SelectTrigger className="w-full sm:w-[200px] h-10">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="year-desc">Сначала новые</SelectItem>
+                  <SelectItem value="year-asc">Сначала старые</SelectItem>
+                  <SelectItem value="title">По алфавиту</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
