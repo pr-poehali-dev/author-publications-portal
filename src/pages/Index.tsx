@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 import Icon from '@/components/ui/icon';
 
 type PublicationType = 'Статьи' | 'Учебные пособия' | 'Монографии' | 'Публицистика' | 'Литература' | 'Интервью';
@@ -88,6 +92,24 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<PublicationType | 'Все'>('Все');
   const [activeSection, setActiveSection] = useState<'publications' | 'about'>('publications');
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    toast({
+      title: 'Сообщение отправлено!',
+      description: 'Спасибо за ваше обращение. Ответим в ближайшее время.',
+    });
+    
+    setFormData({ name: '', email: '', message: '' });
+    setIsSubmitting(false);
+  };
 
   const types: Array<PublicationType | 'Все'> = [
     'Все',
@@ -213,6 +235,64 @@ const Index = () => {
                     <span>Более 100 опубликованных научных работ</span>
                   </li>
                 </ul>
+
+                <h2 className="text-3xl font-semibold text-foreground mt-12 mb-6">
+                  Связаться со мной
+                </h2>
+                <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-base">Имя</Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      placeholder="Ваше имя"
+                      required
+                      className="h-12"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-base">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      placeholder="your@email.com"
+                      required
+                      className="h-12"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="message" className="text-base">Сообщение</Label>
+                    <Textarea
+                      id="message"
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      placeholder="Ваше сообщение..."
+                      required
+                      rows={6}
+                      className="resize-none"
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="h-12 px-8 text-base"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Icon name="Loader2" className="mr-2 h-4 w-4 animate-spin" />
+                        Отправка...
+                      </>
+                    ) : (
+                      <>
+                        <Icon name="Send" className="mr-2 h-4 w-4" />
+                        Отправить
+                      </>
+                    )}
+                  </Button>
+                </form>
               </div>
             </div>
           </div>
