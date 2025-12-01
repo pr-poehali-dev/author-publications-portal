@@ -87,6 +87,7 @@ const publications: Publication[] = [
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<PublicationType | 'Все'>('Все');
+  const [activeSection, setActiveSection] = useState<'publications' | 'about'>('publications');
 
   const types: Array<PublicationType | 'Все'> = [
     'Все',
@@ -108,15 +109,123 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <nav className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-6 py-4">
+          <div className="flex items-center gap-8">
+            <button
+              onClick={() => setActiveSection('publications')}
+              className={`text-base font-medium transition-colors ${
+                activeSection === 'publications'
+                  ? 'text-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Публикации
+            </button>
+            <button
+              onClick={() => setActiveSection('about')}
+              className={`text-base font-medium transition-colors ${
+                activeSection === 'about'
+                  ? 'text-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Об авторе
+            </button>
+          </div>
+        </div>
+      </nav>
+
       <div className="max-w-6xl mx-auto px-6 py-16">
-        <header className="mb-16 animate-fade-in">
-          <h1 className="text-6xl md:text-7xl font-bold text-foreground mb-4 tracking-tight">
-            Публикации
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl">
-            Научные статьи, монографии, учебные материалы и литературные произведения
-          </p>
-        </header>
+        {activeSection === 'about' ? (
+          <div className="animate-fade-in">
+            <div className="max-w-4xl mx-auto">
+              <div className="mb-12 flex flex-col md:flex-row gap-8 items-start">
+                <img
+                  src="https://cdn.poehali.dev/projects/85b19980-5942-4b2d-ac1d-a6c9f697ec82/files/94cc352e-11e2-4c12-b1d1-53a04e5e72ae.jpg"
+                  alt="Портрет автора"
+                  className="w-64 h-64 object-cover rounded-lg shadow-lg"
+                />
+                <div className="flex-1">
+                  <h1 className="text-5xl font-bold text-foreground mb-4 tracking-tight">
+                    Об авторе
+                  </h1>
+                  <p className="text-xl text-muted-foreground mb-6">
+                    Доктор филологических наук, профессор
+                  </p>
+                  <div className="flex gap-4">
+                    <a
+                      href="mailto:author@example.com"
+                      className="inline-flex items-center gap-2 text-primary hover:underline"
+                    >
+                      <Icon name="Mail" size={18} />
+                      <span>Написать письмо</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div className="prose prose-lg max-w-none space-y-6 text-foreground/90">
+                <p className="text-lg leading-relaxed">
+                  Доктор филологических наук, профессор кафедры русской литературы. 
+                  Специализируется на изучении русской литературы XIX-XX веков, 
+                  литературной критике и теории литературы.
+                </p>
+
+                <h2 className="text-3xl font-semibold text-foreground mt-12 mb-6">
+                  Образование
+                </h2>
+                <ul className="space-y-3 text-base">
+                  <li className="flex items-start gap-3">
+                    <Icon name="GraduationCap" size={20} className="text-primary mt-1 flex-shrink-0" />
+                    <span>Московский государственный университет им. М.В. Ломоносова — доктор филологических наук (2015)</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Icon name="GraduationCap" size={20} className="text-primary mt-1 flex-shrink-0" />
+                    <span>Санкт-Петербургский государственный университет — кандидат филологических наук (2008)</span>
+                  </li>
+                </ul>
+
+                <h2 className="text-3xl font-semibold text-foreground mt-12 mb-6">
+                  Научные интересы
+                </h2>
+                <ul className="space-y-2 text-base list-disc list-inside">
+                  <li>Русская литература Серебряного века</li>
+                  <li>Постмодернизм в русской прозе</li>
+                  <li>Литературная критика и теория интерпретации</li>
+                  <li>Компаративистика и межкультурные литературные связи</li>
+                </ul>
+
+                <h2 className="text-3xl font-semibold text-foreground mt-12 mb-6">
+                  Достижения
+                </h2>
+                <ul className="space-y-3 text-base">
+                  <li className="flex items-start gap-3">
+                    <Icon name="Award" size={20} className="text-primary mt-1 flex-shrink-0" />
+                    <span>Лауреат премии "За выдающийся вклад в литературоведение" (2022)</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Icon name="Award" size={20} className="text-primary mt-1 flex-shrink-0" />
+                    <span>Член редколлегии журнала "Вопросы литературы"</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Icon name="Award" size={20} className="text-primary mt-1 flex-shrink-0" />
+                    <span>Более 100 опубликованных научных работ</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            <header className="mb-16 animate-fade-in">
+              <h1 className="text-6xl md:text-7xl font-bold text-foreground mb-4 tracking-tight">
+                Публикации
+              </h1>
+              <p className="text-xl text-muted-foreground max-w-2xl">
+                Научные статьи, монографии, учебные материалы и литературные произведения
+              </p>
+            </header>
 
         <div className="mb-12 space-y-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
           <div className="relative">
@@ -206,6 +315,8 @@ const Index = () => {
           <div className="mt-12 text-center text-sm text-muted-foreground animate-fade-in">
             Найдено публикаций: {filteredPublications.length}
           </div>
+        )}
+          </>
         )}
       </div>
     </div>
